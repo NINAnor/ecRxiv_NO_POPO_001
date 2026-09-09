@@ -267,12 +267,13 @@ The indicator integrates spatial predictions of plant hosts ($50$ plant species)
 3. **Interpretation**:
 <!-- Add a very short description of how the indicator values should be interpreted. Here's an example for a bumblebee indicator: An indicator value of 1 signifies an intact bumblebee community. Values decreasing toward zero reflect negative ecological change, specifically the decline of species expected to be present. This metric does not account for potentially positive changes, such as increases in species' abundance or the arrival of new species. Tip: Add text on the line directly following the subheader, and don't introduce blank lines. This way the whole paragraph renders as a block quote. -->
 
-An indicator value of $1$ represents the upper reference level of pollinator potential, whereas values approaching $0$ indicate lower pollinator potential relative to the reference condition. The indicator reflects the potential occurrence of pollinators and their plant resources rather than directly measuring population abundance or demographic performance.
+An indicator value of $1$ represents the upper reference level of pollinator potential (i.e. the optimal condition), whereas values approaching $0$ indicate the lowest possible pollinator potential relative to the reference condition. The indicator reflects the potential occurrence of pollinators and their plant resources rather than directly measuring population abundance or demographic performance.
 
 4. **Results and development needs**:
 <!-- Briefly, what does the indicator say about the ecosystem condition. What is the current status of  the metric (can it be used or is it still in development), and what immediate tasks remain to improve the indicator or to make the indicator operational -->
 
-The indicator provides a spatial measure of pollinator potential that accounts for plant–pollinator relationships and can be compared among regions. This indicator can be used but further work needs to be done to propagate uncertainty from the underlying species distribution models and interaction data into the final indicator. 
+The indicator provides a spatial measure of pollinator potential that accounts for plant–pollinator relationships and can be compared among regions. The indicator value for 'pollinator potential' was 0.3 nationally, indicating an overall substantial reduction in ecological condition for pollinators. The spatial uncertainty of the indicator value was large, with around 1/6-1/5 of the indicator area being around indicator values of 0.6 or higher (would probably be good to show that, maybe as a violin plot or so?, now I just did som rough guesstimate based on 1 SD, which takes us to 0.3+0.2=0.5 representing roughly the 79th percentile). This result was largely consistent across the regions, but with slightly higher indicator values and uncertainty in Eastern and Southern Norway compared to the other regions.
+This indicator is ready for use but further work needs to be done to propagate uncertainty from the underlying species distribution models and interaction data into the final indicator. 
 
 ## 2. About the underlying data
 
@@ -280,7 +281,7 @@ The indicator provides a spatial measure of pollinator potential that accounts f
 
 The pollinator potential indicator is based on pollinating insects and their plant-host occurrence data integrated from multiple biodiversity datasets and modelled to estimate their occurrence probability across Norway. The modelling framework, as explained by @perrin2026addressing, combines heterogeneous occurrence information with environmental covariates to generate spatially explicit estimates of occurrence probabilities using the integrated species distribution modelling framework. The analyses were restricted to observations from 2012 onwards to provide a consistent contemporary temporal basis for the indicator.
 
-Here, we also access data from biodiversity programs including the Overvåking av semi-naturlig eng (ASO) survey[@asoDataset], Ano [@anoDataOccurrence], Norwegian Insect Monitoring Program [@norwegianInsectMonitoring] from GBIF to validate the indicators. 
+Here, we also access data from biodiversity programs including the monitoring of semi-natural meadows (ASO) [@asoDataset], the national nature monitoring (ANO) [@anoDataOccurrence], and the Norwegian Insect Monitoring Program [@norwegianInsectMonitoring] from GBIF to validate the indicators. 
 
 ### 2.1 Spatial and temporal resolution and extent
 
@@ -332,13 +333,13 @@ The insect indicator is derived from a modelling framework that relates insect o
 <!--# Describe the rationale for assigning the indicator to the ECT class. See https://oneecosystem.pensoft.net/article/58218/
 This doesnt need to be very long. Maybe just a single sentence. -->
 
-The indicator is assigned to the biotic composition and interactions component of ecosystem condition because it represents the potential occurrence and interaction-supported richness of pollinators and their plant resources relative to a reference condition.
+The indicator is assigned to the ECT class B1 'Compositional state characteristics'.
 
 ### 3.1.1 Other condition typologies
 
 <!--# Optional: Add text about other standards or typologies, such as alternative national condition typologies, and how the indicator relates to these -->
 
-The indicator is primarily related to species composition and ecological interactions, and can therefore complement condition typologies that assess biodiversity, species composition, or ecological functioning. No alternative national condition typology has currently been formally assigned.
+None specified
 
 ### 3.2 Ecosystem condition characteristic
 
@@ -352,7 +353,7 @@ The term 'characteristic' is used in a similar way  to the term 'criteria' in Mu
 
 -->
 
-**Need help with this**
+The indicator 'Pollinator potential' relates to the ecosystem characteristic 'Functionally important species and biophysical structures' in the Norwegian framework for ecological condition.
 
 ### 3.3 Collinearities with other indicators
 
@@ -384,7 +385,7 @@ Pollinator occurrence probabilities are first combined with the predicted occurr
 
 <!--# Define the reference condition (or refer to where it is defined). Note the distinction between reference condition and reference levels 10.3897/oneeco.5.e58216  -->
 
-The reference condition represents the ecological state of relatively well-preserved and stable semi-natural meadows and grasslands used as reference sites. These sites are identified from polygons classified as being in good condition in the [**Natur i Norge** (NIN)](https://artsdatabanken.no/naturtyper/natur-i-norge) mapping system. The spatial distribution of these reference sites is used to characterise the expected plant–pollinator system under relatively favourable conditions.
+The reference condition represents the ecological state of relatively well-preserved and stable semi-natural meadows and grasslands used as reference sites. These sites are identified from polygons classified as being in good condition in the [**Natur i Norge** (NiN)](https://artsdatabanken.no/naturtyper/natur-i-norge) mapping system. The spatial distribution of these reference sites is used to characterise the expected plant–pollinator system under relatively favourable conditions.
 
 To account for regional differences in environmental conditions and species composition, reference sites are stratified into five biogeographic regions: Central, East, North, South, and West. The reference condition therefore represents the range of pollinator potential expected under relatively favourable and stable conditions within each region, rather than an assumed historical or pristine baseline.
 
@@ -419,7 +420,7 @@ Describe the spatial resolution of the reference levels. E.g. is it defined as a
 
  -->
 
- The reference levels have regional resolution for the regional indicator and are therefore intended to scale cell-level pollinator potential according to the reference range of the corresponding nature region. The regional reference levels are valid for locations within their respective nature regions. The national reference levels provide a common national scaling and can be applied across the entire study area.
+The reference levels have regional resolution for the regional indicator and are therefore intended to scale cell-level pollinator potential according to the reference range of the corresponding nature region. The regional reference levels are valid for locations within their respective nature regions. The national reference levels provide a common national scaling and can be applied across the entire study area.
 
 Because the reference levels are estimated from a finite set of reference locations, they represent the observed reference range rather than the theoretical minimum and maximum possible pollinator potential. Predicted values can therefore exceed the reference range before truncation; such values are constrained to 0–1 in the final indicator.
 
