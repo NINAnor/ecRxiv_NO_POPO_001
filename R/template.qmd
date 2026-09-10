@@ -306,7 +306,7 @@ The validation data were all from structured surveys, including the Overvåking 
 
 <!--# What are the original units for the most relevant  variables in the data-->
 
-The primary biological observations are species occurrence records, with geographic coordinates representing the observation locations. For insects, the response variable used to construct the indicator is species richness, expressed as the number of insect species estimated or observed at a location. The modelled richness values are subsequently transformed into a scaled indicator using regional reference levels, including $X_0$ and $X_{100}$, to provide a standardized measure of ecological condition.
+The primary biological observations are species occurrence records, with geographic coordinates representing the observation locations. For insects, the response variable used to construct the indicator is species richness, expressed as the number of insect species estimated or observed at a location. The modelled richness values are subsequently transformed into a scaled indicator using regional reference levels to provide a standardized measure of ecological condition.
 
 ### 2.4 Instructions for citing, using and accessing data
 
@@ -353,7 +353,7 @@ The term 'characteristic' is used in a similar way  to the term 'criteria' in Mu
 
 -->
 
-The indicator 'Pollinator potential' relates to the ecosystem characteristic 'Functionally important species and biophysical structures' in the Norwegian framework for ecological condition.
+The indicator 'pollinator potential' relates to the ecosystem characteristic 'Functionally important species and biophysical structures' in the Norwegian framework for ecological condition.
 
 ### 3.3 Collinearities with other indicators
 
@@ -387,7 +387,7 @@ Pollinator occurrence probabilities are first combined with the predicted occurr
 
 The reference condition represents the ecological state of relatively well-preserved and stable semi-natural meadows and grasslands used as reference sites. These sites are identified from polygons classified as being in good condition in the [**Natur i Norge** (NiN)](https://artsdatabanken.no/naturtyper/natur-i-norge) mapping system. The spatial distribution of these reference sites is used to characterise the expected plant–pollinator system under relatively favourable conditions.
 
-To account for regional differences in environmental conditions and species composition, reference sites are stratified into five biogeographic regions: Central, East, North, South, and West. The reference condition therefore represents the range of pollinator potential expected under relatively favourable and stable conditions within each region, rather than an assumed historical or pristine baseline.
+To account for regional differences in environmental conditions and species composition, reference sites are stratified into five biogeographic regions (corresponding to the [NaturIndeks]((https://www.naturindeks.no/Ecosystems/aapent_lavland)), hence we refer to the regions as nature regions hereafter): Central, East, North, South, and West. The reference condition therefore represents the range of pollinator potential expected under relatively favourable and stable conditions within each region, rather than an assumed historical or pristine baseline.
 
 
 ### 4.2 Reference levels
@@ -406,9 +406,9 @@ The indicator is normalised using the distribution of pollinator potential at th
 $$
 I = \frac{X - X_0}{X_{100} - X_0}
 $$
-where $I$ is the normalised indicator value, $X$ is the cell-level pollinator potential, $X_0$ is the minimum reference level (worst condition), and $X_{100}$ is the maximum reference level (best condition). 
+where $I$ is the normalised indicator value, $X$ is the cell-level pollinator potential, $X_0$ is the minimum reference level (worst condition where there is no potential for pollinators), and $X_{100}$ is the maximum reference level (best condition). 
 
-The study region was divided into five nature regions: Central, East, North, South, and West, similar to the classification used by [NaturIndex](https://www.naturindeks.no/Ecosystems/aapent_lavland). We estimate normalised indicator values for each region using the respective reference levels, which we refer to as **regional indicators**. The regional approach accounts for differences in baseline pollinator potential among Norway's biogeographic regions.
+The study region was divided into five regions: Central, East, North, South, and West, similar to the classification used by [NaturIndex](https://www.naturindeks.no/Ecosystems/aapent_lavland). We estimate normalised indicator values for each region using the respective reference levels, which we refer to as **regional indicators**. The regional approach accounts for differences in baseline pollinator potential among Norway's biogeographic regions.
 
 Additionally, we also estimate indicator values for the entire country using common reference levels are applied across all regions and we refer to it as the **national indicator**. For the regional indicator, these reference levels are calculated separately for each nature region, while for the national indicator, common reference levels are applied across all regions. This provides a common national scale and allows spatial differences among regions to be retained rather than being normalised away.
 
@@ -437,6 +437,9 @@ Finally, the indicator represents potential occurrence and interaction support, 
 ### 5.2 Reported uncertainties
 <!-- Describe the nature of the errors you (hopefully) provide alongside the point estimate for the condition metric. It is especially important to clarify if the errors are inferential (referring to the uncertainty of the point estimate) or descriptive (referreing to the data itself). Here' an example text: "What we report as uncertainties in @tbl-finalTable are inferential and refer to the uncertainty around the point estimates. It does not directly describe variation in the data itself. 
 However, the variation in the mean is defined by the spatial variation only, and quartiles are obtained by bootstrapping the set of localities within a region, and calculating the indicator for each of 9999 such samples".   -->
+
+
+**Re-write this section again**
 
 The current indicator is summarised by the mean pollinator potential and its standard deviation (SD), together with the corresponding scaled indicator value. The mean represents the average pollinator potential across the assessment area, while the SD describes the spatial variability of pollinator potential around this mean. The SD should therefore be interpreted as a measure of spatial heterogeneity, rather than as statistical uncertainty in the indicator estimate.
 
