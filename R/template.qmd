@@ -275,8 +275,12 @@ An indicator value of $1$ represents the upper reference level of pollinator pot
 4. **Results and development needs**:
 <!-- Briefly, what does the indicator say about the ecosystem condition. What is the current status of  the metric (can it be used or is it still in development), and what immediate tasks remain to improve the indicator or to make the indicator operational -->
 
-The indicator provides a spatial measure of pollinator potential that accounts for plant–pollinator relationships and can be compared among regions. The indicator value for 'pollinator potential' was 0.3 nationally, indicating an overall substantial reduction in ecological condition for pollinators. The spatial variability of the indicator value was large, with around 1/6-1/5 of the indicator area being around indicator values of 0.6 or higher. This result was largely consistent across the regions, but with slightly higher indicator values and uncertainty in Eastern and Southern Norway compared to the other regions.
-This indicator is ready for use but further work needs to be done to propagate uncertainty from the underlying species distribution models and interaction data into the final indicator. 
+The pollinator potential indicator provides a spatial measure of ecosystem condition based on estimated pollinator potential and plant–pollinator relationships. Current indicator values vary among nature regions, with regional mean values ranging from $0.440$ in West to $0.458$ in North. The national mean is higher at $0.527$. These values represent pollinator potential relative to the reference conditions used to calibrate the indicator, rather than absolute pollinator abundance or population size. Spatial variation is also substantial: 13–28% of the area within the nature regions has indicator values $\ge 0.6$, with the highest proportion in South ($28.3\%$) and the lowest in West ($12.6\%)$; nationally, $32.3\%$ of the area is $\ge 0.6$.
+
+Calibration has a clear and important effect on indicator estimates, with the direction and magnitude varying among nature regions and between regional and national reference frameworks. Calibration is therefore necessary to account for differences in reference conditions. The plant-host evaluation also shows that the indicator is related to plant-host richness, meaning that care is needed when combining it with other plant-host indicators to avoid overlapping information.
+
+The indicator is sufficiently developed to provide a spatial assessment of pollinator potential and to compare ecosystem condition among regions, but further work is required. The main immediate task is to propagate uncertainty from the underlying species-distribution models and plant–pollinator interaction data into the final indicator. The use of the indicator alongside other plant-host measures should also be considered carefully because of their potential correlation.
+
 
 ## 2. About the underlying data
 
@@ -7554,7 +7558,7 @@ knitr::include_graphics("../img/validation_plots.png")
 
 ### 10.2. Reference levels
 
-The reference levels varied substantially among the five nature regions, with the highest values in East and the lowest in North [@tbl-insect-indicator-reference-levels]. The upper reference level ($X_{100}$) ranged from $63$ in North to $145$ in East, whereas the lower reference level ($X_0$) ranged from $14$ to $25$. The resulting reference range therefore varied from $49$ units in North to $120$ units in East. The number of reference locations also differed among regions, ranging from $473$ in North to $1184$ in West.
+Reference levels varied substantially among the five nature regions, with the highest values in the East and the lowest in the North [@tbl-insect-indicator-reference-levels]. The upper reference level ($X_{100}$) ranged from $63$ in the North to $145$ in the East, while the lower reference level ($X_0$) was set to $0$ in all regions, representing the absence of pollinator potential. The number of reference locations also varied among regions, ranging from $473$ in the North to $1,184$ in the West.
 
 ```{r}
 #| echo: false
@@ -7565,6 +7569,8 @@ The reference levels varied substantially among the five nature regions, with th
 tbl_refs <- readRDS(
   "../data/insect_indicator_reference_values.rds"
 )
+
+tbl_refs$min_cal_richness <- 0
 
 names(tbl_refs) <- c(
   "Nature region",
@@ -7636,6 +7642,13 @@ calibrated_region_map <- region_map %>%
   # Keep only the calibrated regional indicator.
   filter(
     indictr == "Calibrated regional indicator"
+  ) %>%
+
+  # Mutate 
+
+  dplyr::mutate(
+    mean = btstrp_m,
+    sd = btstrp_s
   ) %>%
   
   # Keep variables required for mapping.
@@ -7948,9 +7961,9 @@ htmltools::browsable(
 
 Pollinator potential was substantially below the threshold value for good ecological condition (0.6) both nationally and in the five nature regions. East had the highest mean scaled indicator value (0.33), while Central had the lowest (0.27). South (0.32) also had a relatively high mean value, whereas West had a value closer to the national average. Across all open lowland areas, the national mean was 0.30 (SD = 0.20).
 
-These values are relative indicator scores rather than percentages or measures of the number of pollinators. A higher score represents greater estimated pollinator potential relative to the reference conditions used to scale the indicator. The indicator is therefore most useful for identifying differences in pollinator potential among regions and for tracking changes over time.
+**This may change. Check it out after running the bootstrap.**
 
-The standard deviations indicate how much pollinator potential varies among locations within each region. Variation was greatest in South (SD = 0.24) and lowest in North (SD = 0.17). This means that South contains a wider range of local indicator values, whereas the values in North are more closely clustered around its regional mean. Consequently, regional averages should be interpreted alongside their variability, since areas within the same nature region can have substantially different levels of estimated pollinator potential.
+Pollinator potential varied among the five nature regions, although the differences in regional means were relatively small. North had the highest mean scaled indicator value ($0.458$), closely followed by East ($0.457$) and South ($0.456$), while West had the lowest value ($0.440$). Central had a similar value to West ($0.443$). At the national level, the mean indicator value was higher at $0.527$ ($SD = 0.0052$). In addition to these regional averages, the spatial distribution showed considerable variation: $12.6–28.3\%$ of the area within the five regions had indicator values $\ge 0.6$, with the highest proportion in South and the lowest in West. Nationally, $32.3\%$ of the area was $\ge 0.6$.
 
 ```{r tbl-scaledIndicatorValues}
 #| echo: false
@@ -7967,8 +7980,11 @@ tbl_refs <- readRDS(
   
   select(
     nature_region,
-    mean,
-    sd
+    bootstrap_mean,
+    bootstrap_sd,
+    lower_quantile,
+    upper_quantile,
+    percentage_ge_0.6
   ) %>%
   
   mutate(
@@ -8000,16 +8016,24 @@ tbl_refs <- readRDS(
 names(tbl_refs) <- c(
   "Region",
   "Indicator value",
-  "Standard deviation"
+  "Standard deviation",
+  "Lower quantile",
+  "Upper quantile",
+  "Percetage above threshold"
 )
 
 knitr::kable(
   tbl_refs,
   format = "markdown",
   digits = 4,
-    caption = "Regional mean and standard deviation of the scaled pollinator potential indicator across open lowland areas. Values are shown for each nature region and for the national level. Higher indicator values represent greater estimated pollinator potential relative to the reference conditions used for calibration. Standard deviation indicates the spatial variation in indicator values among locations within each region."
+    caption = "Regional mean, standard deviation, lower and upper quantiles of the scaled pollinator potential indicator across open lowland areas. Values are shown for each nature region and for the national level. Higher indicator values represent greater estimated pollinator potential relative to the reference conditions used for calibration. Standard deviation indicates the bootstrap variation around the indicator value. The lower and upper quantiles refer to the 2.5% and 97.5% quantiles from the boostrap. The percentage above threshold represents the percentage of the 50m x 50 m grid cells within the region that have scaled indicator values greater or equal to 0.6. "
 )
 ```
+
+These are relative indicator scores, not percentages or counts of pollinators. Higher values indicate greater estimated pollinator potential relative to the reference conditions used to calibrate the indicator. The regional means therefore provide a basis for comparing ecosystem condition, while the proportion of area above 0.6 provides additional information on the spatial distribution of higher indicator values.
+
+The small standard deviations ($0.0046–0.0063$) and narrow 95% bootstrap intervals indicate low uncertainty around the estimated regional means. The intervals ranged from $0.431–0.4464 in West to $0.451–0.466$ in North. Thus, the regional mean estimates are relatively precise, while the variation in indicator values across the landscape shows that regional averages alone do not fully describe the spatial pattern of pollinator potential.
+
 
 ### 10.4 Evaluation of indicator against independent observations
 
@@ -8026,7 +8050,7 @@ knitr::include_graphics("../img/richness_calibration_relationships.png")
 ```
 
 
-After scaling to regional reference conditions, the relationship with observed insect richness was weaker but remained positive ($r = 0.41$; @fig-insectEvaluationPlot C). Some locations with relatively low observed richness nevertheless had relatively high scaled indicator values, reflecting the use of region-specific reference levels. Overall, the results indicate that the underlying pollinator-potential estimates are reasonably well aligned with field observations and respond, in part, to the availability of plant resources, while also capturing variation not explained by plant richness alone. The calibrated indicator should therefore be interpreted primarily as a measure of pollinator potential relative to regional reference conditions, rather than as a direct representation of either plant or insect richness.
+After scaling to regional reference conditions, the relationship with observed insect richness was weaker but remained positive ($r = 0.41$; @fig-insectEvaluationPlot C). Some locations with relatively low observed richness nevertheless had relatively high scaled indicator values, reflecting the use of region-specific reference levels. Overall, the results indicate that the underlying pollinator-potential estimates are reasonably well aligned with field observations and respond, in part, to the availability of plant resources. Also, the indicator will be correlated with the plant and pollinator insects estimated from other methods since the pollinator potential indicator depends on some estimated plant and pollinator insect distribution maps. 
 
 ```{r fig-interraction_effects_difference}
 #| fig-cap: 'Differences between uncalibrated and calibrated pollinator potential indicators across nature regions. Points show the estimated mean difference between the uncalibrated and calibrated indicators, calculated as uncalibrated minus calibrated values, with error bars representing 95% confidence intervals. The dashed horizontal line indicates no difference between the two approaches. Regional and national (scaled the minimum and maximum reference values from the entire study region) indicators are shown separately.'
@@ -8036,11 +8060,11 @@ After scaling to regional reference conditions, the relationship with observed i
 knitr::include_graphics("../img/insect_calibration_difference_effect.png")
 ```
 
-Calibration had different effects across nature regions and between the regional and national approaches (@fig-interraction_effects_difference). For the regional indicator, calibration generally increased the indicator value, as indicated by negative differences, with the largest effect in the South (approximately $−0.31$) and a smaller effect in the West (approximately $−0.17$). In the Central, East and North regions, the differences were comparatively small, although the Central and East estimates were close to zero. For the national indicator, calibration increased values in the South (approximately $−0.27$), had little effect in the West, but reduced values in the Central and North regions, where the differences were positive (approximately $0.06$ and $0.12$, respectively). Overall, the results show that calibration does not produce a uniform shift in indicator values; its effect depends on both the reference framework (regional versus national) and the nature region. This is expected because calibration adjusts values relative to the distribution of reference conditions, and therefore can alter the relative position of locations differently among regions.
+Calibration affected the estimated indicator values, but the size and direction of the effect varied between nature regions and between regional and national indicators (@fig-interraction_effects_difference). The strongest effects occurred in the South, where calibration increased both regional and national indicator values (approximately $-0.31$ and $-0.27$, respectively). Effects were smaller in the West and generally limited in the Central and East. For the national indicator, calibration reduced values in the Central and North. Overall, calibration can substantially change indicator estimates, and its effect depends on both the region and whether a regional or national reference is used. This highlights the importance of the calibration model in interpreting and comparing indicator values.
 
 ### 10.4 Evaluation against plant-host availablity
 
-The plant-host evaluation provides an additional ecological assessment of the pollinator potential indicator by examining its relationship with plant richness. Expected plant richness showed only a weak positive relationship with observed plant richness ($r < 0.18$; @fig-plantHostEvaluationPlot A), indicating limited correspondence between the modelled and observed plant richness at the survey locations. In contrast, expected plant richness was positively associated with the scaled pollinator potential indicator, with a stronger relationship in the ANO than in the ASO survey dataset (@fig-plantHostEvaluationPlot B). A similar pattern was observed for pollinator potential, with a stronger positive relationship with expected plant richness in the ANO dataset than in the ASO dataset (@fig-plantHostEvaluationPlot C).
+The plant-host evaluation provides an additional ecological assessment of the pollinator potential indicator by examining its relationship with plant richness. Expected plant richness showed only a weak relationship with observed plant richness ($r < 0.18$; @fig-plantHostEvaluationPlot A), indicating limited agreement between modelled and observed plant richness at survey locations. In contrast, expected plant richness was positively related to the scaled pollinator potential indicator, with a stronger relationship in the ANO than in the ASO dataset (@fig-plantHostEvaluationPlot B). Pollinator potential showed a similar pattern, with a stronger relationship with expected plant richness in ANO than in ASO (@fig-plantHostEvaluationPlot C).
 
 ```{r fig-plantHostEvaluationPlot}
 #| fig-cap: 'Comparison of the relationship between expected plant richness and the scaled pollinator potential indicator in the ANO and ASO datasets. Each point represents a survey location, with fitted linear relationships shown separately for the two datasets. Panels A–D show the relationships with observed plant richness, the scaled indicator, pollinator potential, and expected pollinator richness, respectively'
@@ -8050,9 +8074,9 @@ The plant-host evaluation provides an additional ecological assessment of the po
 knitr::include_graphics("../img/plant_indicator_evaluation.png")
 ```
 
-The strongest relationship was observed between expected plant richness and uncalibrated expected pollinator richness ($r > 0.94$; @fig-plantHostEvaluationPlot D). This strong association is consistent with the construction of the pollinator richness measure, which incorporates plant-host availability into the estimation of pollinator potential. Overall, the results indicate that plant resource availability is an important component of the modelled pollinator potential, while the weaker relationship with observed plant richness suggests that the indicator should not be expected to directly reproduce field-measured plant richness.
+The strongest relationship was between expected plant richness and uncalibrated expected pollinator richness ($r > 0.94$; @fig-plantHostEvaluationPlot D). This strong relationship is expected because plant-host availability is directly incorporated into the estimation of pollinator richness. Overall, the results show that the pollinator potential indicator is related to plant-host richness. Care should therefore be taken when combining this indicator with other plant-host indicators, as they may capture overlapping ecological information and result in correlated measures of ecosystem condition.
 
-At the plant survey locations, calibration generally resulted in lower scaled indicator values than the corresponding uncalibrated values, as indicated by negative differences across most nature regions. This pattern was consistent for both the regional and national calibration approaches. The reduction was largest in the South, where the mean difference was approximately $−0.20$ for the regional indicator and $−0.17$ for the national indicator. In contrast, the effect was relatively small in the Central region and moderate in the East and West. The North was the only region where the national indicator showed a positive difference, indicating that calibration increased the scaled indicator relative to the uncalibrated value. Overall, the figure shows that the effect of calibration varies geographically rather than producing a uniform adjustment across the survey locations.
+Calibration had a clear effect on the pollinator potential indicator at plant survey locations, with calibrated values generally differing from the uncalibrated values across nature regions (@fig-plant_interraction_effects_difference). The effect was largest in the South, while it was smaller in the Central, East and West. The direction of the effect also varied in the North for the national indicator. Overall, these results show that calibration meaningfully changes indicator estimates by accounting for regional reference conditions. This demonstrates why calibration was important: the uncalibrated pollinator potential alone does not provide the same interpretation of ecosystem condition relative to the relevant reference conditions. Calibration therefore ensures that indicator values are expressed on a scale that accounts for regional differences in reference conditions.
 
 ```{r fig-plant_interraction_effects_difference}
 #| fig-cap: 'Effect of calibration on the pollinator potential indicator at ANO and ASO survey locations. Points show the mean difference between the uncalibrated and calibrated scaled indicator, calculated as uncalibrated minus calibrated values, across the five nature regions. Error bars represent 95% confidence intervals, and the dashed line indicates no difference between uncalibrated and calibrated values. Results are shown separately for the regional and national calibration approaches. Negative values indicate that calibration increased the indicator value relative to the uncalibrated value, whereas positive values indicate a decrease following calibration.'
@@ -8062,16 +8086,21 @@ At the plant survey locations, calibration generally resulted in lower scaled in
 knitr::include_graphics("../img/plant_calibration_difference_effect.png")
 ```
 
-For both the ANO and ASO survey locations, these results indicate that the calibrated indicator incorporates information about regional reference conditions that is not present in the uncalibrated pollinator potential. Consequently, differences between calibrated and uncalibrated values should not be interpreted as changes in underlying pollinator potential. Rather, calibration changes the relative position of locations on the indicator scale, with the direction and magnitude of the adjustment depending on the nature region and whether regional or national reference conditions are used.
 
 
 ## 11. Summary and Implications
 
-The modelling and evaluation indicate that the pollinator potential indicator captures ecologically meaningful variation in the capacity of open lowland areas to support pollinator communities. The GAM was the best-performing candidate model based on validation RMSE and most closely reproduced the observed patterns. Pollinator potential was substantially lower than the threshold for good ecological condition (0.6) and varied slightly among nature regions, with the highest mean scaled value in East ($0.33$) and the lowest in Central ($0.27$), while the national mean was $0.30$. Considerable variation within regions, particularly in South ($SD = 0.24$), indicates that regional averages can mask substantial local differences in pollinator potential. Reference levels also differed substantially among regions, highlighting the importance of regional ecological context when assessing indicator values. This spatial variation is consistent with the broader understanding that pollinator communities respond to variation in habitat, resources and landscape context, and that pollinator diversity contributes to important ecosystem functions [@ollerton2017pollinator; @steffan2008interplay].
+The results indicate that the pollinator potential indicator provides a spatial measure of the capacity of open lowland ecosystems to support pollinator communities. Pollinator potential varied among nature regions, although regional mean values were relatively similar, ranging from 0.440 in West to 0.458 in North. The national mean was 0.527. There was also substantial spatial variation within regions, with 12.6–28.3% of the area having indicator values ≥0.6. This indicates that regional averages alone do not capture the full spatial variation in pollinator potential. Such variation is consistent with the understanding that pollinator communities respond to habitat, resource availability and landscape context, and that pollinators contribute to important ecosystem functions [@ollerton2017pollinator; @steffan2008interplay].
 
-Evaluation against independent observations provides support for the ecological relevance of the indicator. At Norwegian insect survey locations, pollinator potential showed a strong positive relationship with observed insect richness ($r = 0.78$), while its relationship with expected plant richness was moderate ($r = 0.32$). The plant-host evaluation further showed a very strong relationship between expected plant richness and uncalibrated expected pollinator richness ($r > 0.94$), consistent with the role of plant resources in determining the potential for supporting pollinator communities. This interpretation is supported by empirical and meta-analytic evidence showing generally positive relationships between plant richness and pollinator richness, although the strength of these relationships varies among systems and management contexts [@kral2021meta; @orford2016modest]. At the same time, expected plant richness showed only a weak relationship with observed plant richness in the present evaluation, indicating that the indicator should not be interpreted as a direct measure of plant diversity or as a substitute for field-based biodiversity monitoring. More broadly, pollination is an interaction-dependent ecosystem function, and relationships between biodiversity and pollination cannot be reduced to a single trophic level or species-richness measure [@loy2022effects; @bartholomee2019disentangling].
+Evaluation against independent observations provides support for the ecological relevance of the indicator. Pollinator potential showed a strong positive relationship with observed insect richness ($r = 0.78$), indicating that areas with higher estimated pollinator potential tend to support richer insect communities. Its relationship with expected plant richness was weaker. The strong relationship between expected plant richness and uncalibrated expected pollinator richness ($r > 0.94$) is consistent with the important role of plant resources in supporting pollinator communities [@kral2021meta; @orford2016modest]. However, expected plant richness showed only a weak relationship with observed plant richness in this evaluation. The indicator should therefore not be interpreted as a direct measure of plant diversity, pollinator abundance, species richness, or realised pollination service. Pollination is an interaction-dependent ecosystem function, and its relationship with biodiversity cannot be represented by a single measure of species richness or by one trophic level alone [@loy2022effects; @bartholomee2019disentangling].
 
-For management and conservation, the indicator is therefore most appropriately used as a relative measure of ecological condition and change, rather than as a direct measure of pollinator abundance, species richness or realised pollination service. Calibration to regional or national reference conditions changes the relative position of locations on the indicator scale, with the magnitude and direction of these changes varying among nature regions. This is important when interpreting the indicator for environmental assessment: reference conditions provide the ecological context against which current condition is evaluated, and their definition can strongly influence the resulting assessment [@mcnellie2020reference]. In practical terms, the indicator can support identification of areas with comparatively high or low pollinator potential, prioritisation of areas for further investigation or conservation, and monitoring of changes through time. It should, however, be interpreted alongside information on habitat, plant resources, land use and other pressures rather than used alone to prescribe management actions. From an ecological perspective, the results support an interpretation of pollinator potential as an emergent property of plant–pollinator relationships and resource availability, providing a useful link between ecological theory and spatial environmental assessment. Maintaining or restoring diverse plant communities and associated resources is likely to be relevant for supporting pollinator communities, but management should consider which plant resources are provided, their spatial and temporal availability, and the broader habitat context, rather than relying on plant species richness alone [@kral2021meta; @orford2016modest; @loy2022effects].
+For management, the indicator is best interpreted as a relative measure of pollinator potential and ecosystem condition. Higher values indicate areas with greater estimated pollinator potential relative to the reference conditions used for calibration. The indicator can therefore help identify areas with comparatively high or low pollinator potential, support prioritisation for conservation or further investigation, and provide a basis for monitoring change over time. It should be interpreted alongside information on habitat, plant resources, land use and other pressures rather than being used alone to determine management actions. In particular, the indicator provides information about where conditions are more or less favourable for pollinators, rather than identifying the specific management action required at a location.
+
+Calibration is important to this interpretation because it changes the indicator estimates and their position relative to the reference conditions. The magnitude and direction of the calibration effect varied among nature regions and between regional and national reference frameworks. This demonstrates that calibration is not simply a rescaling of the uncalibrated indicator, but an important step in relating pollinator potential to the ecological reference conditions against which ecosystem condition is assessed [@mcnellie2020reference]. The calibrated indicator should therefore be used when making condition assessments, with the selected reference framework clearly specified.
+
+The relationship with plant-host richness also means that care is needed when combining the indicator with other plant-host indicators, as these measures may contain overlapping ecological information. The pollinator potential indicator should therefore be viewed as complementary to other biodiversity indicators rather than as an independent measure of all aspects of pollinator or plant community condition. Maintaining and restoring diverse and appropriately distributed plant resources is likely to be relevant for supporting pollinator communities, but management should consider the identity, availability and temporal continuity of resources as well as the wider habitat and landscape context [@kral2021meta; @orford2016modest; @loy2022effects].
+
+Overall, the results support the use of the indicator to assess and compare pollinator potential across open lowland ecosystems in Norway. It captures ecologically meaningful spatial variation and shows a strong relationship with independent insect observations. The indicator is therefore sufficiently developed for spatial assessment and monitoring, while propagation of uncertainty from the underlying species-distribution models and plant–pollinator interaction data remains an important step towards full operationalisation.
 
 
 ## 12. Export file
