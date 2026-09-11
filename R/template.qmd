@@ -64,6 +64,9 @@ author:
   - name: Anders Kolstad              #  Enter subsequent authors like this, or remove if not relevant
     affiliations:
       - ref: myID               # To reuse affiliations reference the id like this
+  - name: Joachim Töpper              #  Enter subsequent authors like this, or remove if not relevant
+    affiliations:
+      - ref: myID               # To reuse affiliations reference the id like this
   - name: Markus A.K. Sydenham              #  Enter subsequent authors like this, or remove if not relevant
     affiliations:
       - ref: myID               # To reuse affiliations reference the id like this
@@ -8090,14 +8093,14 @@ Optional: Display the code (don't execute it) or the workflow for exporting the 
 
 **CRediT statement**
 
-* Conceptualization: [KPA, MS, AK]
+* Conceptualization: [KPA, MS, AK, JT]
 * Methodology: [KPA, MS]
 * Data curation: [KPA, MS]
 * Formal analysis: [KPA]
 * Validation: [KPA]
 * Visualization: [KPA]
 * Writing – original draft: [KPA]
-* Writing – review & editing: [KPA, MS]
+* Writing – review & editing: [KPA, MS, JT]
 
 
 **MeRIT attribution**
