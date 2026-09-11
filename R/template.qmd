@@ -70,7 +70,7 @@ author:
   - name: Markus A.K. Sydenham              #  Enter subsequent authors like this, or remove if not relevant
     affiliations:
       - ref: myID               # To reuse affiliations reference the id like this
-AuthorList: Adjei, K. P., Kolstad, A. and Sydenham, M.A.K.  
+AuthorList: Adjei, K. P., Kolstad, A., Töpper, J., and Sydenham, M.A.K.  
 date: September 10, 2026 # Enter date
 data_availability: none
 code_reproducibility: none
