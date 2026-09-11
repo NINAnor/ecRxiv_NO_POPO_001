@@ -267,12 +267,12 @@ The indicator integrates spatial predictions of plant hosts ($50$ plant species)
 3. **Interpretation**:
 <!-- Add a very short description of how the indicator values should be interpreted. Here's an example for a bumblebee indicator: An indicator value of 1 signifies an intact bumblebee community. Values decreasing toward zero reflect negative ecological change, specifically the decline of species expected to be present. This metric does not account for potentially positive changes, such as increases in species' abundance or the arrival of new species. Tip: Add text on the line directly following the subheader, and don't introduce blank lines. This way the whole paragraph renders as a block quote. -->
 
-An indicator value of $1$ represents the upper reference level of pollinator potential (i.e. the optimal condition), whereas values approaching $0$ indicate the lowest possible pollinator potential relative to the reference condition. The indicator reflects the potential occurrence of pollinators and their plant resources rather than directly measuring population abundance or demographic performance.
+An indicator value of $1$ represents the upper reference level of pollinator potential (i.e. the optimal condition), whereas the  $0$-value indicates a lack of potential for pollinators. An indicator value of $0.6$ as the limit for good ecological condition indicates that the potential for pollinators is reduced to 60% of the maximum potential expected in a given grid cell under the reference condition. The maximum possible potential for pollinators, and thus the reference condition, varies across the country. The indicator thus reflects the realization of the expected potential occurrence of pollinators and their plant resources rather than directly measuring population abundance or demographic performance.
 
 4. **Results and development needs**:
 <!-- Briefly, what does the indicator say about the ecosystem condition. What is the current status of  the metric (can it be used or is it still in development), and what immediate tasks remain to improve the indicator or to make the indicator operational -->
 
-The indicator provides a spatial measure of pollinator potential that accounts for plant–pollinator relationships and can be compared among regions. The indicator value for 'pollinator potential' was 0.3 nationally, indicating an overall substantial reduction in ecological condition for pollinators. The spatial uncertainty of the indicator value was large, with around 1/6-1/5 of the indicator area being around indicator values of 0.6 or higher (would probably be good to show that, maybe as a violin plot or so?, now I just did som rough guesstimate based on 1 SD, which takes us to 0.3+0.2=0.5 representing roughly the 79th percentile). This result was largely consistent across the regions, but with slightly higher indicator values and uncertainty in Eastern and Southern Norway compared to the other regions.
+The indicator provides a spatial measure of pollinator potential that accounts for plant–pollinator relationships and can be compared among regions. The indicator value for 'pollinator potential' was 0.3 nationally, indicating an overall substantial reduction in ecological condition for pollinators. The spatial variability of the indicator value was large, with around 1/6-1/5 of the indicator area being around indicator values of 0.6 or higher. This result was largely consistent across the regions, but with slightly higher indicator values and uncertainty in Eastern and Southern Norway compared to the other regions.
 This indicator is ready for use but further work needs to be done to propagate uncertainty from the underlying species distribution models and interaction data into the final indicator. 
 
 ## 2. About the underlying data
@@ -353,7 +353,7 @@ The term 'characteristic' is used in a similar way  to the term 'criteria' in Mu
 
 -->
 
-The indicator 'pollinator potential' relates to the ecosystem characteristic 'Functionally important species and biophysical structures' in the Norwegian framework for ecological condition.
+The indicator relates to the ecosystem characteristic 'Functionally important species and biophysical structures' in the Norwegian framework for ecological condition.
 
 ### 3.3 Collinearities with other indicators
 
@@ -402,15 +402,20 @@ Why was the current option chosen and how were the reference levels quantified? 
 
  -->
 
-The indicator is normalised using the distribution of pollinator potential at the reference locations. For each nature region, the minimum and maximum observed richness values among the reference locations define the lower and upper reference levels:
+X~100~: the maximum observed richness values among the reference locations
+
+X~0~: 0 potential for pollinators (but this value is never realized in the data)
+
+The original indicator values are normalised following
 $$
-I = \frac{X - X_0}{X_{100} - X_0}
+I = \frac{X}{X_{100}}
 $$
-where $I$ is the normalised indicator value, $X$ is the cell-level pollinator potential, $X_0$ is the minimum reference level (worst condition where there is no potential for pollinators), and $X_{100}$ is the maximum reference level (best condition). 
+
+where $I$ is the normalised indicator value, $X$ is the cell-level pollinator potential, and $X_{100}$ is the maximum reference level (best condition) in the respective region (or nationally for the national index). 
 
 The study region was divided into five regions: Central, East, North, South, and West, similar to the classification used by [NaturIndex](https://www.naturindeks.no/Ecosystems/aapent_lavland). We estimate normalised indicator values for each region using the respective reference levels, which we refer to as **regional indicators**. The regional approach accounts for differences in baseline pollinator potential among Norway's biogeographic regions.
 
-Additionally, we also estimate indicator values for the entire country using common reference levels are applied across all regions and we refer to it as the **national indicator**. For the regional indicator, these reference levels are calculated separately for each nature region, while for the national indicator, common reference levels are applied across all regions. This provides a common national scale and allows spatial differences among regions to be retained rather than being normalised away.
+Additionally, we also estimate indicator values for the entire country using common reference levels that are applied across all regions and we refer to it as the **national indicator**. For the regional indicator, these reference levels are calculated separately for each nature region, while for the national indicator, common reference levels are applied across all regions. This provides a common national scale and allows spatial differences among regions to be retained rather than being normalised away.
 
 #### 4.2.1 Spatial resolution and validity
 
@@ -422,7 +427,7 @@ Describe the spatial resolution of the reference levels. E.g. is it defined as a
 
 The reference levels have regional resolution for the regional indicator and are therefore intended to scale cell-level pollinator potential according to the reference range of the corresponding nature region. The regional reference levels are valid for locations within their respective nature regions. The national reference levels provide a common national scaling and can be applied across the entire study area.
 
-Because the reference levels are estimated from a finite set of reference locations, they represent the observed reference range rather than the theoretical minimum and maximum possible pollinator potential. Predicted values can therefore exceed the reference range before truncation; such values are constrained to 0–1 in the final indicator.
+Because the reference levels are estimated from a finite set of reference locations, they represent the observed optima rather than the theoretical maximum possible pollinator potential. Predicted values can therefore exceed the reference range before truncation; such values are constrained to 0–1 in the final indicator.
 
 ## 5. Uncertainties
 ### 5.1 General uncertainties
@@ -803,7 +808,7 @@ names(plant_expected_richness) <-
 
 ```
 
-### 7.4. Interrraction matrix
+### 7.4. Interaction matrix
 
 <!--# Repeat the process for each dataset -->
 
@@ -4873,6 +4878,29 @@ fit_predict_insect_calibration <- function(
 
 #### 9.2.2. Scaled indicators
 
+#### Normalisation
+We use a normalisation function scaling linearly between the reference values. The function is demonstrated in the code below, and in @fig-demo.
+
+```{r fig-demo}
+#| fig-cap: 'Normalisation function (piecewise linear)'
+
+temp <- tibble(
+  variable = 0:100
+)
+
+temp <- temp %>% mutate(indicator = ec_normalise(variable = variable,
+                          x0 = 0,
+                          #x60 = 5,
+                          x100 = 100,
+                          fun = "linear")
+)
+
+temp |>
+  ggplot() +
+  geom_line(aes(x = variable,
+                 y = indicator))
+```
+
 Using the predicted pollinator richness from the best-performing calibrated model, we calculated the reference levels and scaled indicator values at each BSU using the written function `calculate_scaled_indicator()`. This function takes the predicted pollinator richness raster, the observed pollinator richness raster, and the reference polygons as inputs. It computes the mean predicted and observed richness for each reference polygon, classifies them by nature region, and calculates the scaled indicator values based on the reference levels.
 
 ```{r calculate-scaled-indicator}
@@ -7915,7 +7943,7 @@ htmltools::browsable(
 
 ```
 
-Pollinator potential differed among the five nature regions. East had the highest mean scaled indicator value (0.33), while Central had the lowest (0.27). South (0.32) also had a relatively high mean value, whereas West had a value closer to the national average. Across all open lowland areas, the national mean was 0.30 (SD = 0.20).
+Pollinator potential was substantially below the threshold value for good ecological condition (0.6) both nationally and in the five nature regions. East had the highest mean scaled indicator value (0.33), while Central had the lowest (0.27). South (0.32) also had a relatively high mean value, whereas West had a value closer to the national average. Across all open lowland areas, the national mean was 0.30 (SD = 0.20).
 
 These values are relative indicator scores rather than percentages or measures of the number of pollinators. A higher score represents greater estimated pollinator potential relative to the reference conditions used to scale the indicator. The indicator is therefore most useful for identifying differences in pollinator potential among regions and for tracking changes over time.
 
@@ -8036,7 +8064,7 @@ For both the ANO and ASO survey locations, these results indicate that the calib
 
 ## 11. Summary and Implications
 
-The modelling and evaluation indicate that the pollinator potential indicator captures ecologically meaningful variation in the capacity of open lowland areas to support pollinator communities. The GAM was the best-performing candidate model based on validation RMSE and most closely reproduced the observed patterns. Pollinator potential varied among nature regions, with the highest mean scaled value in East ($0.33$) and the lowest in Central ($0.27$), while the national mean was $0.30$. Considerable variation within regions, particularly in South ($SD = 0.24$), indicates that regional averages can mask substantial local differences in pollinator potential. Reference levels also differed substantially among regions, highlighting the importance of regional ecological context when assessing indicator values. This spatial variation is consistent with the broader understanding that pollinator communities respond to variation in habitat, resources and landscape context, and that pollinator diversity contributes to important ecosystem functions [@ollerton2017pollinator; @steffan2008interplay].
+The modelling and evaluation indicate that the pollinator potential indicator captures ecologically meaningful variation in the capacity of open lowland areas to support pollinator communities. The GAM was the best-performing candidate model based on validation RMSE and most closely reproduced the observed patterns. Pollinator potential was substantially lower than the threshold for good ecological condition (0.6) and varied slightly among nature regions, with the highest mean scaled value in East ($0.33$) and the lowest in Central ($0.27$), while the national mean was $0.30$. Considerable variation within regions, particularly in South ($SD = 0.24$), indicates that regional averages can mask substantial local differences in pollinator potential. Reference levels also differed substantially among regions, highlighting the importance of regional ecological context when assessing indicator values. This spatial variation is consistent with the broader understanding that pollinator communities respond to variation in habitat, resources and landscape context, and that pollinator diversity contributes to important ecosystem functions [@ollerton2017pollinator; @steffan2008interplay].
 
 Evaluation against independent observations provides support for the ecological relevance of the indicator. At Norwegian insect survey locations, pollinator potential showed a strong positive relationship with observed insect richness ($r = 0.78$), while its relationship with expected plant richness was moderate ($r = 0.32$). The plant-host evaluation further showed a very strong relationship between expected plant richness and uncalibrated expected pollinator richness ($r > 0.94$), consistent with the role of plant resources in determining the potential for supporting pollinator communities. This interpretation is supported by empirical and meta-analytic evidence showing generally positive relationships between plant richness and pollinator richness, although the strength of these relationships varies among systems and management contexts [@kral2021meta; @orford2016modest]. At the same time, expected plant richness showed only a weak relationship with observed plant richness in the present evaluation, indicating that the indicator should not be interpreted as a direct measure of plant diversity or as a substitute for field-based biodiversity monitoring. More broadly, pollination is an interaction-dependent ecosystem function, and relationships between biodiversity and pollination cannot be reduced to a single trophic level or species-richness measure [@loy2022effects; @bartholomee2019disentangling].
 
