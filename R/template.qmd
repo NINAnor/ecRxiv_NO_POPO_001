@@ -4877,6 +4877,29 @@ fit_predict_insect_calibration <- function(
 
 #### 9.2.2. Scaled indicators
 
+#### Normalisation
+We use a normalisation function scaling linearly between the reference values. The function is demonstrated in the code below, and in @fig-demo.
+
+```{r fig-demo}
+#| fig-cap: 'Normalisation function (piecewise linear)'
+
+temp <- tibble(
+  variable = 0:100
+)
+
+temp <- temp %>% mutate(indicator = ecTools::ec_normalise(variable = variable,
+                          x0 = 0,
+                          #x60 = 5,
+                          x100 = 100,
+                          fun = "linear")
+)
+
+temp |>
+  ggplot() +
+  geom_line(aes(x = variable,
+                 y = indicator))
+```
+
 Using the predicted pollinator richness from the best-performing calibrated model, we calculated the reference levels and scaled indicator values at each BSU using the written function `calculate_scaled_indicator()`. This function takes the predicted pollinator richness raster, the observed pollinator richness raster, and the reference polygons as inputs. It computes the mean predicted and observed richness for each reference polygon, classifies them by nature region, and calculates the scaled indicator values based on the reference levels.
 
 ```{r calculate-scaled-indicator}
