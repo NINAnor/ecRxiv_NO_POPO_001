@@ -4895,7 +4895,7 @@ temp <- tibble(
   variable = 0:100
 )
 
-temp <- temp %>% mutate(indicator = ec_normalise(variable = variable,
+temp <- temp %>% mutate(indicator = ecTools::ec_normalise(variable = variable,
                           x0 = 0,
                           #x60 = 5,
                           x100 = 100,
