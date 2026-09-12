@@ -64,10 +64,13 @@ author:
   - name: Anders Kolstad              #  Enter subsequent authors like this, or remove if not relevant
     affiliations:
       - ref: myID               # To reuse affiliations reference the id like this
+  - name: Joachim Töpper              #  Enter subsequent authors like this, or remove if not relevant
+    affiliations:
+      - ref: myID               # To reuse affiliations reference the id like this
   - name: Markus A.K. Sydenham              #  Enter subsequent authors like this, or remove if not relevant
     affiliations:
       - ref: myID               # To reuse affiliations reference the id like this
-AuthorList: Adjei, K. P., Kolstad, A. and Sydenham, M.A.K.  
+AuthorList: Adjei, K. P., Kolstad, A., Töpper, J., and Sydenham, M.A.K.  
 date: September 10, 2026 # Enter date
 data_availability: none
 code_reproducibility: none
@@ -267,7 +270,7 @@ The indicator integrates spatial predictions of plant hosts ($50$ plant species)
 3. **Interpretation**:
 <!-- Add a very short description of how the indicator values should be interpreted. Here's an example for a bumblebee indicator: An indicator value of 1 signifies an intact bumblebee community. Values decreasing toward zero reflect negative ecological change, specifically the decline of species expected to be present. This metric does not account for potentially positive changes, such as increases in species' abundance or the arrival of new species. Tip: Add text on the line directly following the subheader, and don't introduce blank lines. This way the whole paragraph renders as a block quote. -->
 
-An indicator value of $1$ represents the upper reference level of pollinator potential (i.e. the optimal condition), whereas values approaching $0$ indicate the lowest possible pollinator potential relative to the reference condition. The indicator reflects the potential occurrence of pollinators and their plant resources rather than directly measuring population abundance or demographic performance.
+An indicator value of $1$ represents the upper reference level of pollinator potential (i.e. the optimal condition), whereas the  $0$-value indicates a lack of potential for pollinators. An indicator value of $0.6$ as the limit for good ecological condition indicates that the potential for pollinators is reduced to 60% of the maximum potential expected in a given grid cell under the reference condition. The maximum possible potential for pollinators, and thus the reference condition, varies across the country. The indicator thus reflects the realization of the expected potential occurrence of pollinators and their plant resources rather than directly measuring population abundance or demographic performance.
 
 4. **Results and development needs**:
 <!-- Briefly, what does the indicator say about the ecosystem condition. What is the current status of  the metric (can it be used or is it still in development), and what immediate tasks remain to improve the indicator or to make the indicator operational -->
@@ -357,7 +360,7 @@ The term 'characteristic' is used in a similar way  to the term 'criteria' in Mu
 
 -->
 
-The indicator 'pollinator potential' relates to the ecosystem characteristic 'Functionally important species and biophysical structures' in the Norwegian framework for ecological condition.
+The indicator relates to the ecosystem characteristic 'Functionally important species and biophysical structures' in the Norwegian framework for ecological condition.
 
 ### 3.3 Collinearities with other indicators
 
@@ -406,15 +409,20 @@ Why was the current option chosen and how were the reference levels quantified? 
 
  -->
 
-The indicator is normalised using the distribution of pollinator potential at the reference locations. For each nature region, the minimum and maximum observed richness values among the reference locations define the lower and upper reference levels:
+X~100~: the maximum observed richness values among the reference locations
+
+X~0~: 0 potential for pollinators (but this value is never realized in the data)
+
+The original indicator values are normalised following
 $$
-I = \frac{X - X_0}{X_{100} - X_0}
+I = \frac{X}{X_{100}}
 $$
-where $I$ is the normalised indicator value, $X$ is the cell-level pollinator potential, $X_0$ is the minimum reference level (worst condition where there is no potential for pollinators), and $X_{100}$ is the maximum reference level (best condition). 
+
+where $I$ is the normalised indicator value, $X$ is the cell-level pollinator potential, and $X_{100}$ is the maximum reference level (best condition) in the respective region (or nationally for the national index). 
 
 The study region was divided into five regions: Central, East, North, South, and West, similar to the classification used by [NaturIndex](https://www.naturindeks.no/Ecosystems/aapent_lavland). We estimate normalised indicator values for each region using the respective reference levels, which we refer to as **regional indicators**. The regional approach accounts for differences in baseline pollinator potential among Norway's biogeographic regions.
 
-Additionally, we also estimate indicator values for the entire country using common reference levels are applied across all regions and we refer to it as the **national indicator**. For the regional indicator, these reference levels are calculated separately for each nature region, while for the national indicator, common reference levels are applied across all regions. This provides a common national scale and allows spatial differences among regions to be retained rather than being normalised away.
+Additionally, we also estimate indicator values for the entire country using common reference levels that are applied across all regions and we refer to it as the **national indicator**. For the regional indicator, these reference levels are calculated separately for each nature region, while for the national indicator, common reference levels are applied across all regions. This provides a common national scale and allows spatial differences among regions to be retained rather than being normalised away.
 
 #### 4.2.1 Spatial resolution and validity
 
@@ -426,7 +434,7 @@ Describe the spatial resolution of the reference levels. E.g. is it defined as a
 
 The reference levels have regional resolution for the regional indicator and are therefore intended to scale cell-level pollinator potential according to the reference range of the corresponding nature region. The regional reference levels are valid for locations within their respective nature regions. The national reference levels provide a common national scaling and can be applied across the entire study area.
 
-Because the reference levels are estimated from a finite set of reference locations, they represent the observed reference range rather than the theoretical minimum and maximum possible pollinator potential. Predicted values can therefore exceed the reference range before truncation; such values are constrained to 0–1 in the final indicator.
+Because the reference levels are estimated from a finite set of reference locations, they represent the observed optima rather than the theoretical maximum possible pollinator potential. Predicted values can therefore exceed the reference range before truncation; such values are constrained to 0–1 in the final indicator.
 
 ## 5. Uncertainties
 ### 5.1 General uncertainties
@@ -807,7 +815,7 @@ names(plant_expected_richness) <-
 
 ```
 
-### 7.4. Interrraction matrix
+### 7.4. Interaction matrix
 
 <!--# Repeat the process for each dataset -->
 
@@ -7951,6 +7959,7 @@ htmltools::browsable(
 
 ```
 
+Pollinator potential was substantially below the threshold value for good ecological condition (0.6) both nationally and in the five nature regions. East had the highest mean scaled indicator value (0.33), while Central had the lowest (0.27). South (0.32) also had a relatively high mean value, whereas West had a value closer to the national average. Across all open lowland areas, the national mean was 0.30 (SD = 0.20).
 
 **This may change. Check it out after running the bootstrap.**
 
@@ -8113,7 +8122,7 @@ Optional: Display the code (don't execute it) or the workflow for exporting the 
 
 **CRediT statement**
 
-* Conceptualization: [KPA, MS, AK]
+* Conceptualization: [KPA, MS, AK, JT]
 * Methodology: [KPA, MS]
 * Data curation: [KPA, MS]
 * Formal analysis: [KPA]
